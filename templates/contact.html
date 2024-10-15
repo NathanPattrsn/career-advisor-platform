@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}" type="image/x-icon"> <!-- Link to your favicon -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <title>AI Career Advisor Platform - Form</title>
+</head>
+<body>
+    <style>
+        body {
+        font-family: Arial, sans-serif;
+        margin: 20px;
+    }
+    
+    h1 {
+        text-align: center;
+    }
+    
+    form {
+        max-width: 400px;
+        margin: 0 auto;
+    }
+    
+    label {
+        display: block;
+        margin: 10px 0 5px;
+    }
+    
+    input {
+        width: 100%;
+        padding: 8px;
+        margin-bottom: 15px;
+    }
+    
+    button {
+        padding: 10px;
+        width: 100%;
+    }
+    
+    .hamburger {
+        font-size: 30px;
+            cursor: pointer;
+            padding: 15px;
+            position: fixed;
+            z-index: 1000; /* Make sure the hamburger is on top */
+            margin-top: -20px;
+            margin-left: -20px;
+            color: black; /* Default color */
+        }
+
+        .hamburger.white {
+            color: white; /* Color when sidebar is open */
+        }
+        
+        .sidebar {
+            height: 100%;
+            width: 250px; /* Width of the sidebar */
+            position: fixed;
+            top: 0;
+            left: -250px; /* Initially hidden */
+            background-color: #333; /* Sidebar background color */
+            overflow-x: hidden; /* Prevent horizontal scrolling */
+            transition: 0.3s; /* Smooth transition for opening/closing */
+            padding-top: 60px; /* Space from the top */
+        }
+        
+        .sidebar ul {
+            list-style-type: none;
+            padding: 0;
+        }
+        
+        .sidebar ul li {
+            padding: 15px;
+        }
+        
+        .sidebar ul li a {
+            color: white;
+            text-decoration: none;
+            display: block;
+        }
+        
+        .sidebar ul li a:hover {
+            background-color: #575757; /* Darker background on hover */
+        }
+        
+        .content {
+            padding: 20px; /* Space around the main content */
+            transition: margin-left 0.3s; /* Smooth transition for content shifting */
+        }
+        
+        /* Responsive styles */
+        @media screen and (max-width: 768px) {
+            .hamburger {
+                font-size: 25px;
+            }
+        
+            .sidebar {
+                width: 200px; /* Adjust sidebar width for smaller screens */
+            }
+        }
+
+        .italic {
+            font-style: italic; /* Make text italic */
+        }
+
+        .info {
+            color: #6c757d; /* Bootstrap's secondary color */
+            font-size: 1em; /* Slightly increase font size */
+            margin-top: 10px; /* Add some space above the paragraph */
+        }
+    </style>
+    <div class="hamburger" id="hamburger">
+        &#9776; <!-- Hamburger icon -->
+    </div>
+
+    <nav class="sidebar" id="sidebar">
+        <ul>
+            <li><a href="/">Home</a></li>
+            <li><a href="/chatbot">Chatbot</a></li>
+            <li><a href="/form">Form</a></li>
+            <li><a href="/contact">Contact Us</a></li>
+            <!-- Add more links as needed -->
+        </ul>
+    </nav>
+
+    <div class="content">
+        <h1>Contact Us</h1>
+        <p class="text-center">Please provide your personal details and your message so we can get back to you!</p>
+    </div>
+
+    <form id="contact-form" action="/send_email" method="POST">
+        <label for="subject">Subject:</label>
+        <input class="form-control" type="text" name="subject" id="subject" required>
+    
+        <label for="name">Name:</label>
+        <input class="form-control" type="text" name="name" id="name" required>
+    
+        <label for="email">Email:</label>
+        <input class="form-control" type="email" name="email" id="email" required>
+    
+        <label for="message">Message:</label>
+        <textarea class="form-control mb-3" name="message" id="message" required></textarea>
+    
+        <button class="btn btn-primary" type="submit">Submit</button>
+    </form>
+    
+    
+    
+
+    <div class="content">
+        <p class="text-center italic info">We do not use, store and or sell your personal and course details.</p>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+   document.getElementById("contact-form").addEventListener("submit", function(event) {
+    event.preventDefault(); // Prevent the default form submission
+
+    let formData = new FormData(this);
+
+    fetch("/send_email", {
+        method: "POST",
+        body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.message === "Email sent successfully!") {
+            alert("Email sent successfully!");
+            window.location.reload(); // Refresh the page after alert is closed
+        } else {
+            alert("Failed to send email: " + data.error);
+        }
+    })
+    .catch(error => {
+        alert("An error occurred: " + error);
+    });
+});
+
+      document.addEventListener("DOMContentLoaded", function() {
+    const hamburger = document.getElementById("hamburger");
+    const sidebar = document.getElementById("sidebar");
+    const content = document.querySelector(".content");
+
+    hamburger.addEventListener("click", function() {
+        if (sidebar.style.left === "0px") {
+            sidebar.style.left = "-250px"; // Close the sidebar
+            content.style.marginLeft = "0"; // Adjust content back
+            hamburger.classList.remove("white"); // Remove white color when closed
+        } else {
+            sidebar.style.left = "0px"; // Open the sidebar
+            content.style.marginLeft = "250px"; // Shift content right
+            hamburger.classList.add("white"); // Add white color when open
+        }
+    });
+
+    // Close sidebar when clicking on links
+    const links = sidebar.querySelectorAll('a');
+    links.forEach(link => {
+        link.addEventListener('click', function() {
+            sidebar.style.left = "-250px"; // Close the sidebar
+            content.style.marginLeft = "0"; // Adjust content back
+            hamburger.classList.remove("white"); // Ensure color resets when closed
+        });
+    });
+});
+
+const links = sidebar.querySelectorAll('a');
+links.forEach(link => {
+    link.addEventListener('click', function() {
+        sidebar.style.left = "-250px"; // Close the sidebar
+        content.style.marginLeft = "0"; // Adjust content back
+    });
+});
+    </script>
+</body>
+</html>

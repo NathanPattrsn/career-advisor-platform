@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}" type="image/x-icon"> <!-- Link to your favicon -->
+    <title>AI Career Advisor Platform - Chatbot</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f2f5;
+            margin: 0;
+            padding: 0; /* Remove padding on body to prevent scroll */
+            overflow: hidden; /* Disable overflow scroll on the body */
+        }
+
+        .hamburger {
+            font-size: 30px;
+            cursor: pointer;
+            padding: 15px;
+            position: fixed;
+            z-index: 1000; /* Make sure the hamburger is on top */
+            color: black; /* Default color */
+        }
+
+        .hamburger.white {
+            color: white; /* Color when sidebar is open */
+        }
+
+        #chat-container {
+            display: flex;
+            flex-direction: column; /* Stack children vertically */
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            width: 80%; /* Set width to a percentage for responsiveness */
+            max-width: 600px; /* Set a max width */
+            height: 80vh; /* Set height to a percentage for responsiveness */
+            max-height: 90vh; /* Set a max height */
+            overflow: hidden; /* Hide overflow */
+            padding: 20px; /* Add padding inside the chat container */
+            margin: 0 auto; /* Center the chat container and add top margin */
+        }
+
+        #chatbox {
+            flex: 1; /* Take up available space */
+            padding: 10px;
+            overflow-y: auto; /* Enable vertical scroll for chat messages */
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        #user-input {
+            width: calc(100% - 100px);
+            padding: 10px;
+            border: 1px solid #e0e0e0;
+            border-radius: 5px;
+            margin: 10px 0; /* Add margin only on top and bottom */
+            box-sizing: border-box; /* Include padding in width calculation */
+        }
+
+        #send-button {
+            width: 80px;
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            background-color: #007bff;
+            color: white;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        #send-button:hover {
+            background-color: #0056b3;
+        }
+
+        .message {
+            margin: 5px 0;
+            padding: 8px;
+            border-radius: 5px;
+            line-height: 1.5; /* Improve line spacing */
+        }
+
+        .user {
+            background-color: #e7f1ff;
+            align-self: flex-end;
+            margin-left: auto;
+            text-align: right;
+        }
+
+        .chatbot {
+            background-color: #f1f1f1;
+            text-align: left;
+        }
+
+        .info {
+            margin-top: 10px; /* Space above info block */
+        }
+
+        .key {
+            font-weight: bold;
+            color: #007bff; /* Optional: different color for keys */
+        }
+
+        .value {
+            margin-left: 5px; /* Space between key and value */
+            color: #333; /* Darker color for values */
+        }
+
+        .sidebar {
+            height: 100%;
+            width: 250px; /* Width of the sidebar */
+            position: fixed;
+            top: 0;
+            left: -250px; /* Initially hidden */
+            background-color: #333; /* Sidebar background color */
+            overflow-x: hidden; /* Prevent horizontal scrolling */
+            transition: 0.3s; /* Smooth transition for opening/closing */
+            padding-top: 60px; /* Space from the top */
+        }
+
+        .sidebar ul {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        .sidebar ul li {
+            padding: 15px;
+        }
+
+        .sidebar ul li a {
+            color: white;
+            text-decoration: none;
+            display: block;
+        }
+
+        .sidebar ul li a:hover {
+            background-color: #575757; /* Darker background on hover */
+        }
+
+        .content {
+            padding: 20px; /* Space around the main content */
+            transition: margin-left 0.3s; /* Smooth transition for content shifting */
+        }
+
+        /* Responsive styles */
+        @media screen and (max-width: 768px) {
+            .hamburger {
+                font-size: 25px;
+            }
+
+            #chat-container {
+                width: 90%; /* Make chat container wider on small screens */
+                max-width: none; /* Remove max width on small screens */
+            }
+
+            .sidebar {
+                width: 200px; /* Adjust sidebar width for smaller screens */
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="hamburger" id="hamburger">
+        &#9776; <!-- Hamburger icon -->
+    </div>
+
+    <nav class="sidebar" id="sidebar">
+        <ul>
+            <li><a href="/">Home</a></li>
+            <li><a href="/chatbot">Chatbot</a></li>
+            <li><a href="/form">Form</a></li>
+            <li><a href="/contact">Contact Us</a></li>
+            <!-- Add more links as needed -->
+        </ul>
+    </nav>
+
+    <div class="content text-center">
+        <h1>Talk to Our Chatbot!</h1>
+        <p class="text-center">The chatbot is only currently tailored to give its best career advice based upon the information you give. It is only advice and not instructing you to do anything against your will.</p>
+    </div>
+
+    <div id="chat-container">
+        <div id="chatbox"></div>
+        <input type="text" id="user-input" placeholder="Type your message..." />
+        <button id="send-button">Send</button>
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const hamburger = document.getElementById("hamburger");
+    const sidebar = document.getElementById("sidebar");
+    const content = document.querySelector(".content");
+
+    // Hamburger menu toggle functionality
+    hamburger.addEventListener("click", function() {
+        if (sidebar.style.left === "0px") {
+            sidebar.style.left = "-250px"; // Close the sidebar
+            content.style.marginLeft = "0"; // Adjust content back
+            hamburger.classList.remove("white"); // Remove white color when closed
+        } else {
+            sidebar.style.left = "0px"; // Open the sidebar
+            content.style.marginLeft = "250px"; // Shift content right
+            hamburger.classList.add("white"); // Add white color when open
+        }
+    });
+
+    // Close sidebar when clicking on links
+    const links = sidebar.querySelectorAll('a');
+    links.forEach(link => {
+        link.addEventListener('click', function() {
+            sidebar.style.left = "-250px"; // Close the sidebar
+            content.style.marginLeft = "0"; // Adjust content back
+            hamburger.classList.remove("white"); // Ensure color resets when closed
+        });
+    });
+        });
+
+        const links = sidebar.querySelectorAll('a');
+        links.forEach(link => {
+            link.addEventListener('click', function() {
+                sidebar.style.left = "-250px"; // Close the sidebar
+                content.style.marginLeft = "0"; // Adjust content back
+            });
+        });
+
+        document.addEventListener("DOMContentLoaded", function() {
+            // Ensure initialMessage is a valid JavaScript object
+            const initialMessage = JSON.parse('{{ initial_message|tojson|safe }}');  // Ensure it's correctly formatted as JSON
+
+            // Function to format the profile data nicely
+            function formatProfileData(profile) {
+                return `
+                    <div class="info">
+            <div>Hi, <strong>${profile.name}</strong>. Here is what I can provide from your information:</div>
+            <div><span class="key">Best Career Path:</span> <span class="value">${profile.path}</span></div>
+                    </div>
+                `;
+            }
+
+            function addMessageToChat(message, sender) {
+                const chatbox = document.getElementById('chatbox');
+                const messageDiv = document.createElement('div');
+                messageDiv.classList.add('message', sender);
+                messageDiv.innerHTML = `${sender === 'user' ? 'User' : 'Chatbot'}: ${message}`;
+                chatbox.appendChild(messageDiv);
+                chatbox.scrollTop = chatbox.scrollHeight; // Scroll to the bottom
+            }
+
+            // On page load, display the initial message
+            window.onload = function() {
+                const formattedProfileMessage = formatProfileData(initialMessage);
+                addMessageToChat(formattedProfileMessage, 'chatbot');
+            };
+
+            function sendMessage() {
+                const userInput = document.getElementById('user-input').value;
+                if (!userInput) return; // Do not send empty messages
+                addMessageToChat(userInput, 'user');
+                document.getElementById('user-input').value = '';
+
+                // Send the user input to the server for processing
+                fetch('/chatbot/ask', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ question: userInput })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    addMessageToChat(data.response, 'chatbot'); // Display the bot's response
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
+            }
+
+            // Add event listener to the send button
+            document.getElementById('send-button').addEventListener('click', sendMessage);
+
+            // Allow pressing Enter to send a message
+            document.getElementById('user-input').addEventListener('keypress', function(event) {
+                if (event.key === 'Enter') {
+                    sendMessage();
+                }
+            });
+        });
+    </script>
+</body>
+</html>

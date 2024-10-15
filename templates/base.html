@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}" type="image/x-icon"> <!-- Link to your favicon -->
+    <title>AI Career Advisor Platform</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+
+        h1 {
+            text-align: center;
+        }
+
+        .typing-effect {
+            font-size: 18px;
+            text-align: center;
+            margin: 20px 0; /* Space around the text */
+            color: #333; /* Text color */
+        }
+
+        .hamburger {
+            font-size: 30px;
+            cursor: pointer;
+            padding: 15px;
+            position: fixed;
+            z-index: 1000; /* Make sure the hamburger is on top */
+            color: black; /* Default color */
+        }
+
+        .hamburger.white {
+            color: white; /* Color when sidebar is open */
+        }
+
+        .sidebar {
+            height: 100%;
+            width: 250px; /* Width of the sidebar */
+            position: fixed;
+            top: 0;
+            left: -250px; /* Initially hidden */
+            background-color: #333; /* Sidebar background color */
+            overflow-x: hidden; /* Prevent horizontal scrolling */
+            transition: 0.3s; /* Smooth transition for opening/closing */
+            padding-top: 60px; /* Space from the top */
+        }
+
+        .sidebar ul {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        .sidebar ul li {
+            padding: 15px;
+        }
+
+        .sidebar ul li a {
+            color: white;
+            text-decoration: none;
+            display: block;
+        }
+
+        .sidebar ul li a:hover {
+            background-color: #575757; /* Darker background on hover */
+        }
+
+        .content {
+            padding: 20px; /* Space around the main content */
+            transition: margin-left 0.3s; /* Smooth transition for content shifting */
+        }
+
+        /* Responsive styles */
+        @media screen and (max-width: 768px) {
+            .hamburger {
+                font-size: 25px;
+            }
+
+            .sidebar {
+                width: 200px; /* Adjust sidebar width for smaller screens */
+            }
+        }
+
+        #typing-container {
+            margin-bottom: 20px; /* Space below the typing container */
+        }
+
+        #options h2 {
+            margin-bottom: 15px; /* Space below the subtitle */
+        }
+
+        .option-button {
+            margin-bottom: 10px; /* Space between buttons */
+        }
+
+        .fade-in {
+        opacity: 0; /* Start fully transparent */
+        transition: opacity 0.5s ease-in; /* Transition effect */
+        }
+
+        .fade-in.show {
+            opacity: 1; /* Fully opaque */
+        }
+    </style>
+</head>
+<body>
+
+    <div class="hamburger" id="hamburger">
+        &#9776; <!-- Hamburger icon -->
+    </div>
+
+    <nav class="sidebar" id="sidebar">
+        <ul>
+            <li><a href="/">Home</a></li>
+            <li><a href="/chatbot">Chatbot</a></li>
+            <li><a href="/form">Form</a></li>
+            <li><a href="/contact">Contact Us</a></li>
+            <!-- Add more links as needed -->
+        </ul>
+    </nav>
+
+    <div class="d-flex flex-column justify-content-center align-items-center vh-100"> <!-- Center vertically and horizontally -->
+        <div class="content text-center"> <!-- Added text-center for consistent alignment -->
+            <h1 class="mb-4">Welcome to Your AI Career Advisor Platform</h1>
+            <div id="typing-container" class="mb-4"></div> <!-- Container for typing message -->
+            
+            <div id="options" class="fade-in" style="display: none;"> <!-- Hidden by default -->
+                <h2 class="mb-4">Not Sure Where to Start?</h2>
+                <button class="btn btn-primary mb-3 w-50" onclick="window.location.href='/form.html'">Fill Out Our Form!</button>
+                <button class="btn btn-primary w-50" onclick="window.location.href='/chatbot.html'">Talk to Our Chatbot!</button>
+            </div>
+        </div>
+    </div>
+    
+    
+    
+    <script>
+       document.addEventListener("DOMContentLoaded", function() {
+    const hamburger = document.getElementById("hamburger");
+    const sidebar = document.getElementById("sidebar");
+    const content = document.querySelector(".content");
+
+    // Hamburger menu toggle functionality
+    hamburger.addEventListener("click", function() {
+        if (sidebar.style.left === "0px") {
+            sidebar.style.left = "-250px"; // Close the sidebar
+            content.style.marginLeft = "0"; // Adjust content back
+            hamburger.classList.remove("white"); // Remove white color when closed
+        } else {
+            sidebar.style.left = "0px"; // Open the sidebar
+            content.style.marginLeft = "250px"; // Shift content right
+            hamburger.classList.add("white"); // Add white color when open
+        }
+    });
+
+    // Close sidebar when clicking on links
+    const links = sidebar.querySelectorAll('a');
+    links.forEach(link => {
+        link.addEventListener('click', function() {
+            sidebar.style.left = "-250px"; // Close the sidebar
+            content.style.marginLeft = "0"; // Adjust content back
+            hamburger.classList.remove("white"); // Ensure color resets when closed
+        });
+    });
+
+    // Typing effect function
+    function typeMessage(message, containerId, typingSpeed) {
+        const container = document.getElementById(containerId);
+        container.innerHTML = ""; // Clear previous messages
+        let index = 0;
+
+        function type() {
+            if (index < message.length) {
+                container.innerHTML += message.charAt(index);
+                index++;
+                setTimeout(type, typingSpeed);
+            } else {
+                // Show options after typing is complete
+                setTimeout(showOptions, 500); // Wait for 3 seconds after typing
+            }
+        }
+
+        type();
+    }
+
+    // Function to show options with fade-in effect
+    function showOptions() {
+        const options = document.getElementById("options");
+        options.style.display = "block"; // Change to block to show
+        options.classList.add("show"); // Add show class for fade-in effect
+
+        // Fade in buttons
+        const buttons = options.getElementsByTagName("button");
+        for (let button of buttons) {
+            button.style.opacity = 0; // Set initial opacity to 0
+            button.style.transition = "opacity 0.5s ease"; // Add transition
+            setTimeout(() => {
+                button.style.opacity = 1; // Fade in effect
+            }, 50); // Start the fade-in effect
+        }
+    }
+
+    // Call the typing function on page load
+    typeMessage("Welcome to the AI Career Advisor platform designed for university students! This is currently in early stages and we are updating and improving this platform as we go along, any feedback would be much appreciated!", "typing-container", 35);
+});
+
+    </script>
+    
+    
+</body>
+</html>
