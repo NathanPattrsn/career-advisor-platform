@@ -1,21 +1,26 @@
 from flask import Flask, render_template, request, jsonify, session
 from flask_mail import Mail, Message
 from flask_cors import CORS
-from ai_logic import get_career_advice, process_user_question  # New function for processing questions
+from ai_logic import get_career_advice, process_user_question  # Function for processing questions
 import os
+from dotenv import load_dotenv  # Import load_dotenv to load .env variables
+
+# Load environment variables from .env file
+load_dotenv()
+
 app = Flask(__name__, template_folder=os.path.join(os.path.dirname(__file__), '../templates'))
-app.secret_key = 'JHagduasdYGBJKUH34253245'
+app.secret_key = 'JHagduasdYGBJKUH34253245'  # Secret key for session management
 CORS(app)
 
-# Configure Flask-Mail
+# Configure Flask-Mail with environment variables
 app.config['MAIL_SERVER'] = 'smtp.gmail.com'
 app.config['MAIL_PORT'] = 587
 app.config['MAIL_USE_TLS'] = True
-app.config['MAIL_USERNAME'] = os.getenv('MAIL_USERNAME')  # Fetching from environment variable
-app.config['MAIL_PASSWORD'] = os.getenv('MAIL_PASSWORD')  # Fetching from environment variable
-app.config['MAIL_DEFAULT_SENDER'] = os.getenv('MAIL_USERNAME')  # Using the same email as sender
+app.config['MAIL_USERNAME'] = os.getenv('MAIL_USERNAME')  # Fetch from environment variable
+app.config['MAIL_PASSWORD'] = os.getenv('MAIL_PASSWORD')  # Fetch from environment variable
+app.config['MAIL_DEFAULT_SENDER'] = os.getenv('MAIL_USERNAME')  # Use the same email as the sender
 
-# Raise an error if environment variables are missing
+# Raise an error if environment variables for email are missing
 if not app.config['MAIL_USERNAME'] or not app.config['MAIL_PASSWORD']:
     raise ValueError("MAIL_USERNAME and MAIL_PASSWORD must be set as environment variables")
 
@@ -23,13 +28,16 @@ mail = Mail(app)
 
 @app.route('/send_email', methods=['POST'])
 def send_email():
+    # Fetch form data
     subject = request.form.get('subject')
     name = request.form.get('name')
     email = request.form.get('email')
     message = request.form.get('message')
 
-    print(f"Subject: {subject}, Name: {name}, Email: {email}, Message: {message}")  # Debugging line
+    # Debugging: Print the form data
+    print(f"Subject: {subject}, Name: {name}, Email: {email}, Message: {message}")
 
+    # Create and send email
     msg = Message(subject, recipients=["onesitedesigns@gmail.com"])
     msg.body = f"Name: {name}\nEmail: {email}\n\nMessage:\n{message}"
 
@@ -41,14 +49,14 @@ def send_email():
         print(f"Error sending email: {str(e)}")  # Debugging line
         return jsonify({"message": "Failed to send email.", "error": str(e)}), 500
 
-
-# Route for serving the index.html page
+# Route for serving the base HTML page
 @app.route('/')
 def home():
     return render_template('base.html')
 
 @app.route('/add_profile', methods=['POST'])
 def add_new_profile():
+    # Add new profile to session
     data = request.json
     profile_data = {
         'name': data.get('name'),
@@ -59,15 +67,13 @@ def add_new_profile():
         'modules': ', '.join(data.get('modules', [])),
         'interests': ', '.join(data.get('interests', []))
     }
-    # Store profile data in session
     session['profile'] = profile_data
     print("Profile added to session:", session['profile'])  # Debug statement
     return jsonify({"message": "Profile added successfully!"}), 201
 
-
-
 @app.route('/fetch_profiles', methods=['GET'])
 def fetch_profiles():
+    # Fetch profiles stored in session
     profiles = session.get('profiles', [])
     return jsonify(profiles), 200
 
@@ -81,11 +87,12 @@ def contactform():
 
 @app.route('/chatbot')
 def chatbot():
+    # Retrieve profile from session and get career advice
     profile = session.get('profile', {})
     print("Profile retrieved from session:", profile)  # Debug statement
     best_career_advice = get_career_advice(profile)
 
-    # Create a structured message
+    # Structured message to display in the chatbot
     initial_message = {
         "path": best_career_advice,
         "name": profile.get('name'),
@@ -101,26 +108,23 @@ def chatbot():
 
 @app.route('/chatbot/ask', methods=['POST'])
 def ask_bot():
+    # Process user questions with AI logic
     data = request.json
     question = data.get('question', '')
     profile = session.get('profile', {})
     
-    # Process the user's question with your NLP logic
-    response = process_user_question(question, profile)  # This function handles the user's question
-
+    response = process_user_question(question, profile)  # Function that processes user question
     return jsonify({"response": response})
-
 
 @app.route('/check_session', methods=['GET'])
 def check_session():
+    # Check if a profile is stored in session
     profile = session.get('profile')  # Retrieve profile data from session
     if profile:
         return jsonify({"profile": profile}), 200
     else:
         return jsonify({"message": "No profile found in session."}), 404
 
-
-
 if __name__ == '__main__':
-    port = int(os.environ.get('PORT', 443))  # Use environment variable PORT or default to 5000
-    app.run(debug=True, port=port) # You can change 5000 to your desired port number
+    port = int(os.getenv('PORT', 443))  # Default to port 443 if not set
+    app.run(debug=True, port=port)
