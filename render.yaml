@@ -1,0 +1,12 @@
+services:
+  - type: web
+    name: career-advisor-platform
+    env: python
+    buildCommand: ""
+    startCommand: gunicorn backend.app:app
+    envVars:
+      - key: MAIL_USERNAME
+        value: YOUR_EMAIL
+      - key: MAIL_PASSWORD
+        value: YOUR_APP_PASSWORD
+    plan: free

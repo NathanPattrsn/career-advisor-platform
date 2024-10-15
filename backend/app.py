@@ -3,7 +3,8 @@ from flask_mail import Mail, Message
 from flask_cors import CORS
 from ai_logic import get_career_advice, process_user_question  # New function for processing questions
 import os
-
+app.config['MAIL_USERNAME'] = os.getenv('MAIL_USERNAME')
+app.config['MAIL_PASSWORD'] = os.getenv('MAIL_PASSWORD')
 app = Flask(__name__, template_folder=os.path.join(os.path.dirname(__file__), '../templates'))
 app.secret_key = 'JHagduasdYGBJKUH34253245'
 
