@@ -8,7 +8,6 @@ Flask==3.0.3
 Flask-Cors==5.0.0
 Flask-Mail==0.10.0
 git-filter-repo==2.45.0
-google-auth-oauthlib==1.2.1
 httplib2==0.22.0
 idna==3.10
 itsdangerous==2.2.0
