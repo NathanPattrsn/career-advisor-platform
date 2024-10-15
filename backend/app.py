@@ -2,7 +2,9 @@ from flask import Flask, render_template, request, jsonify, session
 from flask_mail import Mail, Message
 from flask_cors import CORS
 from ai_logic import get_career_advice, process_user_question  # New function for processing questions
+from dotenv import load_dotenv
 import os
+load_dotenv()
 app = Flask(__name__, template_folder=os.path.join(os.path.dirname(__file__), '../templates'))
 app.secret_key = 'JHagduasdYGBJKUH34253245'
 CORS(app)
@@ -119,8 +121,7 @@ def check_session():
     else:
         return jsonify({"message": "No profile found in session."}), 404
 
-
+port = int(os.getenv('PORT', 5000))
 
 if __name__ == '__main__':
-    port = int(os.environ.get('PORT', 5000))  # Use environment variable PORT or default to 5000
     app.run(debug=True, port=port) # You can change 5000 to your desired port number
