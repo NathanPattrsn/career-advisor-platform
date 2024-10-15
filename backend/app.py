@@ -3,20 +3,21 @@ from flask_mail import Mail, Message
 from flask_cors import CORS
 from ai_logic import get_career_advice, process_user_question  # New function for processing questions
 import os
-app.config['MAIL_USERNAME'] = os.getenv('MAIL_USERNAME')
-app.config['MAIL_PASSWORD'] = os.getenv('MAIL_PASSWORD')
 app = Flask(__name__, template_folder=os.path.join(os.path.dirname(__file__), '../templates'))
 app.secret_key = 'JHagduasdYGBJKUH34253245'
-
 CORS(app)
 
 # Configure Flask-Mail
-app.config['MAIL_SERVER'] = 'smtp.gmail.com'  # Example for Gmail
+app.config['MAIL_SERVER'] = 'smtp.gmail.com'
 app.config['MAIL_PORT'] = 587
 app.config['MAIL_USE_TLS'] = True
-app.config['MAIL_USERNAME'] = 'onesitedesigns@gmail.com'  # Your email
-app.config['MAIL_PASSWORD'] = 'amluborowdnevqsd'  # Your email password
-app.config['MAIL_DEFAULT_SENDER'] = 'onesitedesigns@gmail.com'  # Use the same email as sender
+app.config['MAIL_USERNAME'] = os.getenv('MAIL_USERNAME')  # Fetching from environment variable
+app.config['MAIL_PASSWORD'] = os.getenv('MAIL_PASSWORD')  # Fetching from environment variable
+app.config['MAIL_DEFAULT_SENDER'] = os.getenv('MAIL_USERNAME')  # Using the same email as sender
+
+# Raise an error if environment variables are missing
+if not app.config['MAIL_USERNAME'] or not app.config['MAIL_PASSWORD']:
+    raise ValueError("MAIL_USERNAME and MAIL_PASSWORD must be set as environment variables")
 
 mail = Mail(app)
 
