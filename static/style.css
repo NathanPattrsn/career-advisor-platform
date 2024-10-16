@@ -1,9 +1,11 @@
+/* General Styles */
 body {
     font-family: Arial, sans-serif;
-    background-color: #f0f2f5;
+    background-color: #000000; /* Dark background to match logo */
     margin: 0;
     padding: 0; /* Remove padding on body to prevent scroll */
     overflow: hidden; /* Disable overflow scroll on the body */
+    color: #ffffff; /* White text for better contrast */
 }
 
 header {
@@ -18,15 +20,18 @@ header {
 
 h1 {
     text-align: center;
+    color: #00aaff; /* Set color to match logo */
 }
 
+/* Typing Effect */
 .typing-effect {
     font-size: 18px;
     text-align: center;
     margin: 20px 0;
-    color: #333;
+    color: #00aaff; /* Color for typing message */
 }
 
+/* Profile Icon */
 .profile-icon a {
     color: white; /* Adjust color */
     font-size: 30px;
@@ -40,6 +45,7 @@ h1 {
     cursor: pointer;
 }
 
+/* Hamburger Menu */
 .hamburger {
     font-size: 30px;
     cursor: pointer;
@@ -56,10 +62,7 @@ h1 {
     color: white;
 }
 
-.hamburger.white {
-    color: white;
-}
-
+/* Sidebar */
 .sidebar {
     height: 100%;
     width: 250px;
@@ -88,36 +91,23 @@ h1 {
 }
 
 .sidebar ul li a:hover {
-    background-color: #575757;
+    background-color: #575757; /* Hover effect */
 }
 
+/* Content Area */
 .content {
     padding: 20px;
     transition: margin-left 0.3s;
 }
 
-/* Responsive styles */
-@media screen and (max-width: 768px) {
-    .hamburger {
-        font-size: 25px;
-    }
-    .sidebar {
-        width: 200px;
-    }
-    #chat-container {
-        width: 90%;
-        max-width: none;
-    }
-}
-
-/* Chat container styles */
+/* Chat Container Styles */
 #chat-container {
     max-width: 500px;
     margin: 20px auto;
-    background-color: #f4f4f4;
+    background-color: #222; /* Dark background for chat container */
     border-radius: 8px;
     padding: 20px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
 }
 
 #chatbox {
@@ -128,7 +118,7 @@ h1 {
     max-height: 400px;
     min-height: 400px;
     overflow-y: auto;
-    border: 1px solid #ccc;
+    border: 1px solid #444; /* Dark border for the chat box */
     border-radius: 8px;
 }
 
@@ -138,11 +128,13 @@ h1 {
     border-radius: 8px;
     border: 1px solid #ddd;
     margin: 20px 10px 20px 0;
+    background-color: #333; /* Dark input field */
+    color: #fff; /* White text in input */
 }
 
 #send-button {
     padding: 10px 20px;
-    background-color: #007bff;
+    background-color: #00aaff; /* Button color to match logo */
     color: white;
     border: none;
     border-radius: 8px;
@@ -150,12 +142,13 @@ h1 {
 }
 
 #send-button:hover {
-    background-color: #0056b3;
+    background-color: #00f2ff; /* Hover color */
 }
 
+/* User and Bot Message Styles */
 .user-message {
     align-self: flex-end;
-    background-color: #007bff;
+    background-color: #00aaff; /* User message color */
     color: white;
     padding: 10px;
     border-radius: 10px;
@@ -164,38 +157,18 @@ h1 {
     word-wrap: break-word;
 }
 
-/* Bot message styling */
 .bot-message {
     align-self: flex-start;
-    background-color: #f1f1f1;
-    color: black;
+    background-color: #444; /* Bot message background */
+    color: white;
     padding: 10px;
     border-radius: 10px;
     margin-bottom: 10px;
     max-width: 70%;
     word-wrap: break-word;
 }
-/* Chat messages */
-.message {
-    margin: 5px 0;
-    padding: 8px;
-    border-radius: 5px;
-    line-height: 1.5;
-}
 
-.user {
-    background-color: #e7f1ff;
-    align-self: flex-end;
-    margin-left: auto;
-    text-align: right;
-}
-
-.chatbot {
-    background-color: #f1f1f1;
-    text-align: left;
-}
-
-/* Form styles */
+/* Form Styles */
 form {
     max-width: 400px;
     margin: 0 auto;
@@ -204,20 +177,31 @@ form {
 label {
     display: block;
     margin: 10px 0 5px;
+    color: #ffffff; /* White text for labels */
 }
 
 input {
     width: 100%;
     padding: 8px;
     margin-bottom: 15px;
+    background-color: #333; /* Dark input field */
+    color: #ffffff; /* White text in input */
 }
 
 button {
     padding: 10px;
     width: 100%;
+    background-color: #00aaff; /* Button color */
+    color: white;
+    border: none;
+    border-radius: 5px;
 }
 
-/* Additional styles */
+button:hover {
+    background-color: #00f2ff; /* Hover color */
+}
+
+/* Additional Styles */
 .fade-in {
     opacity: 0;
     transition: opacity 0.5s ease-in;
@@ -239,12 +223,12 @@ button {
 
 .key {
     font-weight: bold;
-    color: #007bff;
+    color: #00aaff; /* Key color */
 }
 
 .value {
     margin-left: 5px;
-    color: #333;
+    color: #ffffff; /* White value text */
 }
 
 #logoutButton {
@@ -262,4 +246,18 @@ button {
     padding: 20px;
     max-width: 300px;
     margin: 0 auto;
+}
+
+/* Responsive styles */
+@media screen and (max-width: 768px) {
+    .hamburger {
+        font-size: 25px;
+    }
+    .sidebar {
+        width: 200px;
+    }
+    #chat-container {
+        width: 90%;
+        max-width: none;
+    }
 }
