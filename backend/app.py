@@ -95,22 +95,22 @@ def chatbot1():
 
 @app.route('/career-advisor')
 def career_advisor():
-    profile = session.get('profile', None)
+    # profile = session.get('profile', None)
 
-    if not profile:
-        return "No profile found. Please fill out the form first.", 400
+    # if not profile:
+    #     return "No profile found. Please fill out the form first.", 400
 
-    # Generate career suggestion based on the user's profile
-    best_career_advice = generate_career_suggestion(profile)
+    # # Generate career suggestion based on the user's profile
+    # best_career_advice = generate_career_suggestion(profile)
 
-    # Structured message to display in the chatbot
-    initial_message = {
-        "path": best_career_advice,
-        "name": profile.get('name'),
-        "degree": profile.get('degree'),
-        "interests": profile.get('interests'),
-        "modules": profile.get('modules')
-    }
+    # # Structured message to display in the chatbot
+    # initial_message = {
+    #     "path": best_career_advice,
+    #     "name": profile.get('name'),
+    #     "degree": profile.get('degree'),
+    #     "interests": profile.get('interests'),
+    #     "modules": profile.get('modules')
+    # }
 
     # Render the chatbot page, passing in the initial message
     return render_template('career-advisor.html', initial_message=initial_message)
