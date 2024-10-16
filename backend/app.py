@@ -153,4 +153,4 @@ def check_session():
 
 if __name__ == '__main__':
     port = int(os.getenv('PORT', 443))  # Default to port 443 if not set
-    app.run(debug=True, port=port)
+    app.run(debug=True, host='0.0.0.0', port=port)
