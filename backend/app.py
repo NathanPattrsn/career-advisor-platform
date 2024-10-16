@@ -9,8 +9,8 @@ from dotenv import load_dotenv  # Import load_dotenv to load .env variables
 load_dotenv()
 
 app = Flask(
-    __name__, 
-    template_folder=os.path.join(os.path.dirname(__file__), '../templates'), 
+    __name__,
+    template_folder=os.path.join(os.path.dirname(__file__), '../templates'),
     static_folder=os.path.join(os.path.dirname(__file__), '../static')
 )
 app.secret_key = 'JHagduasdYGBJKUH34253245'  # Secret key for session management
@@ -71,23 +71,14 @@ def profile():
     return render_template('profile.html')
 
 @app.route('/add_profile', methods=['POST'])
-def add_new_profile():
-    # Add new profile to session
-    data = request.json
-    profile_data = {
-        'name': data.get('name'),
-        'degree': data.get('degree'),
-        'modules': ', '.join(data.get('modules', [])),
-        'interests': ', '.join(data.get('interests', []))
-    }
-    session['profile'] = profile_data
-    print("Profile added to session:", session['profile'])  # Debug statement
-    return jsonify({"message": "Profile added successfully!"}), 201
+def add_profile():
+    profile_data = request.json
+    session['profile'] = profile_data  # Store the profile in session
+    return jsonify({"message": "Profile added successfully"}), 200
 
 @app.route('/fetch_profiles', methods=['GET'])
 def fetch_profiles():
-    # Fetch profiles stored in session
-    profiles = session.get('profiles', [])
+    profiles = session.get('profiles', [])  # Fetch profiles stored in session
     return jsonify(profiles), 200
 
 @app.route('/form')
@@ -98,12 +89,19 @@ def form():
 def contactform():
     return render_template('contact.html')
 
+@app.route('/chatbot')
+def chatbot1():
+    return render_template('chatbot.html')
+
 @app.route('/career-advisor')
-def chatbot():
-    # Retrieve profile from session and get career advice
-    profile = session.get('profile', {})
-    print("Profile retrieved from session:", profile)  # Debug statement
-    best_career_advice = get_career_advice(profile)
+def career_advisor():
+    profile = session.get('profile', None)
+
+    if not profile:
+        return "No profile found. Please fill out the form first.", 400
+
+    # Generate career suggestion based on the user's profile
+    best_career_advice = generate_career_suggestion(profile)
 
     # Structured message to display in the chatbot
     initial_message = {
@@ -114,7 +112,25 @@ def chatbot():
         "modules": profile.get('modules')
     }
 
+    # Render the chatbot page, passing in the initial message
     return render_template('career-advisor.html', initial_message=initial_message)
+
+# Function to analyze the profile and give a career suggestion
+def generate_career_suggestion(profile):
+    degree = profile.get('degree')
+    modules = profile.get('modules')
+    interests = profile.get('interests')
+
+    # Simplified career advice logic based on degree and interests
+    if 'computer science' in degree.lower():
+        if 'machine learning' in modules or 'ai' in interests:
+            return "AI Specialist or Machine Learning Engineer"
+        else:
+            return "Software Engineer or Web Developer"
+    elif 'business' in degree.lower():
+        return "Business Analyst or Project Manager"
+    else:
+        return "Explore roles based on your strengths and interests!"
 
 @app.route('/career-advisor/ask', methods=['POST'])
 def ask_bot():

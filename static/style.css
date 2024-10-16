@@ -49,6 +49,13 @@ h1 {
     color: white;
 }
 
+.username-display {
+    margin: 10px 20px 0 0; /* Space between username and profile icon */
+    font-weight: bold; /* Bold text for the username */
+    float: right;
+    color: white;
+}
+
 .hamburger.white {
     color: white;
 }
@@ -105,51 +112,69 @@ h1 {
 
 /* Chat container styles */
 #chat-container {
-    display: flex;
-    flex-direction: column;
-    background-color: white;
+    max-width: 500px;
+    margin: 20px auto;
+    background-color: #f4f4f4;
     border-radius: 8px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-    width: 80%;
-    max-width: 600px;
-    height: 80vh;
-    max-height: 90vh;
-    overflow: hidden;
     padding: 20px;
-    margin: 0 auto;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
 
 #chatbox {
-    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
     padding: 10px;
+    max-height: 400px;
+    min-height: 400px;
     overflow-y: auto;
-    border-bottom: 1px solid #e0e0e0;
+    border: 1px solid #ccc;
+    border-radius: 8px;
 }
 
 #user-input {
-    width: calc(100% - 100px);
+    width: 100%;
     padding: 10px;
-    border: 1px solid #e0e0e0;
-    border-radius: 5px;
-    margin: 10px 0;
-    box-sizing: border-box;
+    border-radius: 8px;
+    border: 1px solid #ddd;
+    margin: 20px 10px 20px 0;
 }
 
 #send-button {
-    width: 80px;
-    padding: 10px;
-    border: none;
-    border-radius: 5px;
+    padding: 10px 20px;
     background-color: #007bff;
     color: white;
+    border: none;
+    border-radius: 8px;
     cursor: pointer;
-    transition: background-color 0.3s;
 }
 
 #send-button:hover {
     background-color: #0056b3;
 }
 
+.user-message {
+    align-self: flex-end;
+    background-color: #007bff;
+    color: white;
+    padding: 10px;
+    border-radius: 10px;
+    margin-bottom: 10px;
+    max-width: 70%;
+    word-wrap: break-word;
+}
+
+/* Bot message styling */
+.bot-message {
+    align-self: flex-start;
+    background-color: #f1f1f1;
+    color: black;
+    padding: 10px;
+    border-radius: 10px;
+    margin-bottom: 10px;
+    max-width: 70%;
+    word-wrap: break-word;
+}
 /* Chat messages */
 .message {
     margin: 5px 0;
@@ -220,4 +245,21 @@ button {
 .value {
     margin-left: 5px;
     color: #333;
+}
+
+#logoutButton {
+    width: 200px;
+}
+
+#app {
+    text-align: center;
+    align-items: center;
+    height: 100vh;
+}
+
+#profile-details-content {
+    text-align: left;
+    padding: 20px;
+    max-width: 300px;
+    margin: 0 auto;
 }

@@ -1,17 +1,4 @@
-    // Initialize Supabase client
-const supabaseUrl = 'https://ynqfcsnmekopstlkgadm.supabase.co';
-const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InlucWZjc25tZWtvcHN0bGtnYWRtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MjkxMDA0MjUsImV4cCI6MjA0NDY3NjQyNX0.Rg6_lUSTkGOec-cm7UQzikTFcBf57qqKFWxW59rznpg'; // Use environment variable in production
-const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
-
-document.addEventListener("DOMContentLoaded", async () => {
-
-    // Check if a user is authenticated
-    const { data: { user }, error } = await supabaseClient.auth.getUser();
-    if (!user) {
-        // User is not logged in, redirect to login page
-        window.location.href = '/login'; // Change to your login page
-    }
-    
+document.addEventListener("DOMContentLoaded", function() {
     const hamburger = document.getElementById("hamburger");
     const sidebar = document.getElementById("sidebar");
     const content = document.querySelector(".content");
@@ -80,8 +67,6 @@ document.addEventListener("DOMContentLoaded", async () => {
     typeMessage("Welcome to the AI Career Advisor platform designed for university students! This is currently in early stages and we are updating and improving this platform as we go along, any feedback would be much appreciated!", "typing-container", 35);
 });
 
-// Other event listeners and AJAX code...
-
 async function submitForm(event) {
     event.preventDefault(); // Prevent default form submission
 
@@ -91,8 +76,6 @@ async function submitForm(event) {
         modules: document.getElementById('modules').value.split(','),
         interests: document.getElementById('interests').value.split(',')
     };
-    
-    localStorage.setItem("userData", JSON.stringify(formData)); // Store it in local storage
 
     try {
         const response = await fetch('/add_profile', {
@@ -104,7 +87,7 @@ async function submitForm(event) {
         });
 
         if (response.ok) {
-            // Redirect to the chatbot page where the bot will analyze the data
+            // Redirect to the chatbot page
             window.location.href = '/career-advisor';
         } else {
             const errorMessage = await response.json();
@@ -114,57 +97,3 @@ async function submitForm(event) {
         console.error('Error submitting form:', error);
     }
 }
-
-
-
-// Handle Profile Form Submission
-document.getElementById('profileForm').addEventListener('submit', async (event) => {
-    event.preventDefault();
-    
-    const name = document.getElementById('name').value;
-    const username = document.getElementById('username').value;
-    const email = document.getElementById('email').value;
-    const password = document.getElementById('password').value;
-
-    // Check if the email is already registered
-    const { data: existingProfiles, error: fetchError } = await supabaseClient
-        .from('profiles')
-        .select('*')
-        .eq('email', email);
-    
-    if (fetchError) {
-        console.error('Error checking existing profiles:', fetchError);
-        alert('There was an error checking your profile. Please try again.');
-        return;
-    }
-
-    if (existingProfiles.length > 0) {
-        alert('This email is already registered. Please log in or use a different email.');
-        return;
-    }
-
-    // Sign up the user with Supabase Auth
-    const { user, error: signUpError } = await supabaseClient.auth.signUp({
-        email,
-        password
-    });
-
-    if (signUpError) {
-        console.error('Error signing up:', signUpError);
-        alert('There was an error signing you up. Please try again.');
-        return;
-    }
-
-    // Insert the new profile (without the password)
-    const { data, error } = await supabaseClient
-        .from('profiles')
-        .insert([{ name, username, email }]); // Don't store the password
-
-    if (error) {
-        console.error('Error creating profile:', error);
-        alert('There was an error creating your profile. Please try again.');
-    } else {
-        // Redirect to profile.html after successful creation
-        window.location.href = 'profile.html'; // Directly redirect to profile page
-    }
-});
