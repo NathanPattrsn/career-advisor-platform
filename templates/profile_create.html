@@ -3,13 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <link rel="stylesheet" type="text/css" href="/static/style.css">
     <link rel="icon" href="/static/favicon.ico" type="image/x-icon"> <!-- Link to your favicon -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <title>AI Career Advisor Platform - Chatbot</title>
-    <style>
-    </style>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <title>Career Advisor - Create a Profile</title>
 </head>
 <body>
     <header>
@@ -34,17 +32,27 @@
             </ul>
         </nav>
 
-    <div class="content text-center">
-        <h1>Talk to Our Chatbot!</h1>
-        <p class="text-center">The chatbot is only currently tailored to give its best career advice based upon the information you give. It is only advice and not instructing you to do anything against your will.</p>
+    <div class="mt-3" id="app">
+        <h1>Create a Profile!</h1>
+        
+        <!-- Create Profile Form -->
+        <div id="create-profile-form">
+            <form id="profileForm">
+                <label for="name">Name:</label>
+                <input class="form-control" type="text" id="name">
+                
+                <label for="username">Username:</label>
+                <input class="form-control" type="text" id="username">
+                
+                <label for="email">Email:</label>
+                <input class="form-control" type="email" id="email">
+                
+                <button class="btn btn-primary mt-3" type="submit">Create Profile</button>
+            </form>
+        </div>
     </div>
-
-    <div id="chat-container">
-        <div id="chatbox"></div>
-        <input type="text" id="user-input" placeholder="Type your message..." />
-        <button id="send-button">Send</button>
-    </div>
-
+    
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
     <script src="/static/script.js"></script>
 </body>
 </html>

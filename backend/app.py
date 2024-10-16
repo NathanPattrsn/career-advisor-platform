@@ -8,7 +8,11 @@ from dotenv import load_dotenv  # Import load_dotenv to load .env variables
 # Load environment variables from .env file
 load_dotenv()
 
-app = Flask(__name__, template_folder=os.path.join(os.path.dirname(__file__), '../templates'))
+app = Flask(
+    __name__, 
+    template_folder=os.path.join(os.path.dirname(__file__), '../templates'), 
+    static_folder=os.path.join(os.path.dirname(__file__), '../static')
+)
 app.secret_key = 'JHagduasdYGBJKUH34253245'  # Secret key for session management
 CORS(app)
 
@@ -54,16 +58,17 @@ def send_email():
 def home():
     return render_template('base.html')
 
+@app.route('/profile_create')
+def profcreate():
+    return render_template('profile_create.html')
+
 @app.route('/add_profile', methods=['POST'])
 def add_new_profile():
     # Add new profile to session
     data = request.json
     profile_data = {
         'name': data.get('name'),
-        'email': data.get('email'),
-        'university': data.get('university'),
         'degree': data.get('degree'),
-        'gpa': data.get('gpa'),
         'modules': ', '.join(data.get('modules', [])),
         'interests': ', '.join(data.get('interests', []))
     }
@@ -85,7 +90,7 @@ def form():
 def contactform():
     return render_template('contact.html')
 
-@app.route('/chatbot')
+@app.route('/career-advisor')
 def chatbot():
     # Retrieve profile from session and get career advice
     profile = session.get('profile', {})
@@ -96,17 +101,14 @@ def chatbot():
     initial_message = {
         "path": best_career_advice,
         "name": profile.get('name'),
-        "email": profile.get('email'),
-        "university": profile.get('university'),
         "degree": profile.get('degree'),
-        "gpa": profile.get('gpa'),
         "interests": profile.get('interests'),
         "modules": profile.get('modules')
     }
 
-    return render_template('chatbot.html', initial_message=initial_message)
+    return render_template('career-advisor.html', initial_message=initial_message)
 
-@app.route('/chatbot/ask', methods=['POST'])
+@app.route('/career-advisor/ask', methods=['POST'])
 def ask_bot():
     # Process user questions with AI logic
     data = request.json
