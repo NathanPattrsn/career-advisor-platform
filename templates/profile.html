@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="/static/style.css">
+    <link rel="icon" href="/static/favicon.ico" type="image/x-icon"> <!-- Link to your favicon -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+</head>
+<body>
+    <header>
+        <div class="hamburger" id="hamburger">
+            &#9776; <!-- Hamburger icon -->
+        </div>
+    
+        <div class="profile-icon">
+            <a href="/profile_create">
+                <i class="fas fa-user-circle"></i>
+            </a>
+        </div>
+    </header>
+    
+    <nav class="sidebar" id="sidebar">
+        <ul>
+            <li><a href="/">Home</a></li>
+            <li><a href="/form">Career Advisor Form</a></li>
+            <li><a href="/career-advisor">Career Advisor Bot</a></li>
+            <li><a href="/chatbot">Chatbot</a></li>
+            <li><a href="/contact">Contact Us</a></li>
+        </ul>
+    </nav>
+
+    <div class="mt-3" id="app">
+        <h1 id="welcome-message">Welcome, <span id="username"></span>!</h1>
+        
+        <!-- Profile Details Section -->
+        <div id="profile-details" class="mt-4">
+          <h2>Your Profile Details:</h2>
+          <p><strong>Name:</strong> <span id="profile-name"></span></p>
+          <p><strong>Email:</strong> <span id="profile-email"></span></p>
+          <p><strong>Username:</strong> <span id="username"></span></p>
+          <button id="logoutButton">Logout</button>
+        </div>
+      </div>
+      
+      <script type="module">
+document.addEventListener('DOMContentLoaded', async () => {
+  const userData = JSON.parse(sessionStorage.getItem('userData'));
+  if (userData) {
+    console.log('User data:', userData);
+
+    // Query the Supabase database to retrieve the user's data
+const { createClient } = supabase
+const supabaseUrl = 'https://ynqfcsnmekopstlkgadm.supabase.co';
+const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InlucWZjc25tZWtvcHN0bGtnYWRtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MjkxMDA0MjUsImV4cCI6MjA0NDY3NjQyNX0.Rg6_lUSTkGOec-cm7UQzikTFcBf57qqKFWxW59rznpg';
+const supabase = createClient(supabaseUrl, supabaseKey);
+    const { data, error } = await supabase
+      .from('users')
+      .select('name, email, username')
+      .eq('email', userData.email);
+
+    if (error) {
+      console.error('Error retrieving user data:', error);
+    } else {
+      const user = data[0];
+      console.log('User data from database:', user);
+
+      // Update the page with the user data
+      document.getElementById('welcome-message').innerHTML = `Welcome, ${user.username}!`;
+      document.getElementById('profile-name').innerHTML = user.name;
+      document.getElementById('profile-email').innerHTML = user.email;
+      document.getElementById('username').innerHTML = user.username;
+    }
+  } else {
+    // User is not logged in, redirect to login page
+    window.location.href = '/login';
+  }
+});
+      </script>
+</body>
+</html>

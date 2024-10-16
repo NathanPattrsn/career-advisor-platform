@@ -62,6 +62,14 @@ def home():
 def profcreate():
     return render_template('profile_create.html')
 
+@app.route('/login')
+def proflogin():
+    return render_template('profile_login.html')
+
+@app.route('/profile')
+def profile():
+    return render_template('profile.html')
+
 @app.route('/add_profile', methods=['POST'])
 def add_new_profile():
     # Add new profile to session

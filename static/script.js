@@ -106,7 +106,7 @@ async function submitForm(event) {
 // Initialize Supabase client
 const supabaseUrl = 'https://ynqfcsnmekopstlkgadm.supabase.co';
 const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InlucWZjc25tZWtvcHN0bGtnYWRtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MjkxMDA0MjUsImV4cCI6MjA0NDY3NjQyNX0.Rg6_lUSTkGOec-cm7UQzikTFcBf57qqKFWxW59rznpg'; // Use environment variable in production
-const supabase = supabase.createClient(supabaseUrl, supabaseKey);
+const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
 
 // Handle Profile Form Submission
 document.getElementById('profileForm').addEventListener('submit', async (event) => {
@@ -115,9 +115,10 @@ document.getElementById('profileForm').addEventListener('submit', async (event) 
     const name = document.getElementById('name').value;
     const username = document.getElementById('username').value;
     const email = document.getElementById('email').value;
+    const password = document.getElementById('password').value;
 
-    // Optional: Check if email is already registered before inserting
-    const { data: existingProfiles, error: fetchError } = await supabase
+    // Check if the email is already registered
+    const { data: existingProfiles, error: fetchError } = await supabaseClient
         .from('profiles')
         .select('*')
         .eq('email', email);
@@ -133,18 +134,88 @@ document.getElementById('profileForm').addEventListener('submit', async (event) 
         return;
     }
 
-    // Insert the new profile
-    const { data, error } = await supabase
+    // Sign up the user with Supabase Auth
+    const { user, error: signUpError } = await supabaseClient.auth.signUp({
+        email,
+        password
+    });
+
+    if (signUpError) {
+        console.error('Error signing up:', signUpError);
+        alert('There was an error signing you up. Please try again.');
+        return;
+    }
+
+    // Insert the new profile (without the password)
+    const { data, error } = await supabaseClient
         .from('profiles')
-        .insert([{ name, username, email }]);
+        .insert([{ name, username, email }]); // Don't store the password
 
     if (error) {
         console.error('Error creating profile:', error);
         alert('There was an error creating your profile. Please try again.');
     } else {
-        alert('Profile created successfully!');
-        document.getElementById('create-profile-form').style.display = 'none';
-        document.getElementById('main-form').style.display = 'block';
+        // Redirect to profile.html after successful creation
+        window.location.href = 'profile.html'; // Directly redirect to profile page
     }
 });
+
+let alertShown = false; // Flag to track alert
+
+// Function to load user profile information
+async function loadUserProfile() {
+    const { data: { user }, error } = await supabaseClient.auth.getUser();
+    
+    if (!user) {
+        // Redirect to login if not logged in
+        window.location.href = '/login'; // Change to your login page
+        return; // Prevent further execution
+    }
+
+    const email = user.email; // Use the authenticated user's email
+    const { data: profiles, error: profileError } = await supabaseClient
+        .from('profiles')
+        .select('*')
+        .eq('email', email);
+
+    if (profileError) {
+        console.error('Error fetching profile:', profileError);
+        if (!alertShown) {
+            alert('There was an error fetching your profile details. Please try again.');
+            alertShown = true; // Set flag to true after showing alert
+        }
+        return;
+    }
+
+    if (profiles.length > 0) {
+        const profile = profiles[0];
+        document.getElementById('username').innerText = profile.username;
+        document.getElementById('profile-name').innerText = profile.name;
+        document.getElementById('profile-email').innerText = profile.email;
+    } else {
+        if (!alertShown) {
+            alert('Profile not found. Please ensure you are signed up.');
+            alertShown = true; // Set flag to true after showing alert
+        }
+    }
+}
+
+// Load the user profile when the page loads
+window.onload = loadUserProfile;
+
+
+// Logout function
+async function logout() {
+    const { error } = await supabaseClient.auth.signOut();
+    if (error) {
+        console.error('Error logging out:', error);
+        alert('There was an error logging you out. Please try again.');
+    } else {
+        // Redirect to login or home page
+        window.location.href = 'login.html'; // Change to your login page
+    }
+}
+
+// Attach logout function to a button (assuming you have a logout button with id 'logoutButton')
+document.getElementById('logoutButton').addEventListener('click', logout);
 
