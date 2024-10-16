@@ -104,13 +104,13 @@ def career_advisor():
     # best_career_advice = generate_career_suggestion(profile)
 
     # # Structured message to display in the chatbot
-    # initial_message = {
+    initial_message = {
     #     "path": best_career_advice,
     #     "name": profile.get('name'),
     #     "degree": profile.get('degree'),
     #     "interests": profile.get('interests'),
     #     "modules": profile.get('modules')
-    # }
+    }
 
     # Render the chatbot page, passing in the initial message
     return render_template('career-advisor.html', initial_message=initial_message)
